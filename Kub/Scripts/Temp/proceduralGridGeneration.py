@@ -1,9 +1,9 @@
 import pygame
 from pygame.locals import *
 import numpy as np
-import noise
+from perlin_noise import PerlinNoise
 
-class Text():
+class Text:
     '''
     Create a text object.
     Variables: 
@@ -30,6 +30,7 @@ class Text():
         self.rect.topleft = self.pos
         return self.img, self.rect
 
+
 class ProceduralGridGeneration:
     ''' 
     Procedurally generates a world
@@ -50,17 +51,36 @@ class ProceduralGridGeneration:
 
         self.fps = 60
 
+        '''
+        Parameters for perlin noise generator
+        '''
+        self.octaves = 10
+        self.seedPerlin = 35
+        self.noise = PerlinNoise(octaves=self.octaves, seed=self.seedPerlin)
+
         self.running = True 
 
-    def noiseGridGenerator(self, density):
-        self.noiseGrid = [[0 for i in range(self._gridWidth)] for j in range(self._gridHeight)]
-        for x in range(self._gridWidth):
-            for y in range(self._gridHeight):
-                pass
+    def noiseGridGenerator(self):
+        self.noiseGrid = [[int(self.noise([i/self._gridWidth, j/self._gridHeight]) * 10) for i in range(self._gridWidth)] for j in range(self._gridHeight)]
+
+
+    '''
+    Pygame draws object in order,
+    the function below decides the order of the draw
+    '''
+    def draw(self):
+        self.screen.fill(self._screenBackground)
+        self.drawGrid()
+
+        pygame.display.update()
+
+
 
     def run(self):
 
         self.clock = pygame.time.Clock()
+
+        self.noiseGridGenerator()
 
         while self.running:
             self.clock.tick(self.fps)
@@ -68,17 +88,15 @@ class ProceduralGridGeneration:
                 if event.type == pygame.QUIT:
                     self.running = False
 
-            self.screen.fill(self._screenBackground)
-            self.drawGrid()
-            pygame.display.update()
-
+            self.draw()
         pygame.quit()
 
     def drawGrid(self):
-        for x in range(0, self._gridWidth * self._gridCellSize, self._gridCellSize):
-            for y in range(0, self._gridHeight * self._gridCellSize, self._gridCellSize):
-                rect = pygame.Rect(x, y, self._gridCellSize, self._gridCellSize)
-                rectText = "1"
-                img, rectText = Text(rectText, pos=(x +2, y +2)).render()
+
+        for x in range(self._gridWidth):
+            for y in range(self._gridHeight):
+                rect = pygame.Rect(x * self._gridCellSize, y * self._gridCellSize, self._gridCellSize, self._gridCellSize)
+                rectText = str(self.noiseGrid[x][y])
+                img, rectText = Text(rectText, pos=( (x * self._gridCellSize) + 2, (y * self._gridCellSize) +2)).render()
                 pygame.draw.rect(self.screen, self._gridLineColor, rect, 1)
                 self.screen.blit(img, rectText)
