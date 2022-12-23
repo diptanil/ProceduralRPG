@@ -1,7 +1,12 @@
+import os
+
 import pygame
 from pygame.locals import *
 import numpy as np
 from perlin_noise import PerlinNoise
+
+from ..Lookups.lookups import *
+from ..Utils.utils import *
 
 class Text:
     '''
@@ -29,6 +34,38 @@ class Text:
         self.rect = self.img.get_rect()
         self.rect.topleft = self.pos
         return self.img, self.rect
+
+
+class SpritesheetLoader:
+    def __init__(self, filename):
+        self.filename = filename
+        self.exists = False
+        try:
+            self.sprite_image = pygame.image.load(
+                os.path.join(SPRITES_FOLDER, self.filename)
+                )
+            self.exists = True
+        except:
+            raise FileExistsError("Unable to load spritesheet")
+
+    def load_sprite(self, pos: XYPos, colorkey = None):
+        rect = pygame.Rect(pos.x, pos.y, SPRITE_SIZE, SPRITE_SIZE)
+        image = pygame.Surface(rect.size).convert()
+        image.blit(self.sprite_image, (0, 0), rect)
+        if colorkey is not None:
+            if colorkey == -1:
+                colorkey = image.get_at((0, 0))
+            image.set_colorkey(colorkey, pygame.RLEACCEL)
+        return image
+
+    def load(self, colorkey = None):
+        self.sprites = {}
+        if self.exists:
+            for sp in list(SPRITES[self.filename].keys()):
+                self.sprites[sp] = self.load_sprite(
+                    SPRITES[self.filename][sp]
+                )
+        return self.sprites
 
 
 class ProceduralGridGeneration:
@@ -59,6 +96,7 @@ class ProceduralGridGeneration:
         self.noise = PerlinNoise(octaves=self.octaves, seed=self.seedPerlin)
 
         self.running = True 
+        self.groundTexture = SpritesheetLoader("Ground/Grass.png").load()
 
     def noiseGridGenerator(self):
         self.noiseGrid = [[int(self.noise([i/self._gridWidth, j/self._gridHeight]) * 10) for i in range(self._gridWidth)] for j in range(self._gridHeight)]
