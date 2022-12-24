@@ -3,16 +3,11 @@ from .spritesheetLoader import SpritesheetLoader
 
 class LoadTextures:
 
-    def __init__(self, category):
+    def __init__(self, category, colorkey = None):
         self.Textures = {}
-
-        # category = "terrain"
 
         files = list(SPRITES[category].keys())
         for filename in files:
-            if category == "terrain":
-                sprites = SpritesheetLoader(filename, category).load()
-            else:
-                sprites = SpritesheetLoader(filename, category).load(colorkey=-1)
+            sprites = SpritesheetLoader(filename, category).load(colorkey)
             for key in list(sprites.keys()):
                 self.Textures[key] = sprites[key]

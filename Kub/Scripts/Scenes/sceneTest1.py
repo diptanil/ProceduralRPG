@@ -16,6 +16,8 @@ class Scene_Test1(BaseScene):
         self.terrain = ProceduralWorldGenerator(seed = 2).noiseGrid
         self.vegetation = self.GenVegetation()
         self.spriteManager = SpritesManager()
+
+        self.spriteManager.boxSelectAnim.iter()
         
     def Update(self):
         pass
@@ -149,10 +151,14 @@ class Scene_Test1(BaseScene):
         #     img, rectText = Text(str(vegVal), pos=(pos.x + 2, pos.y +2)).render()
         #     pygame.draw.rect(screen, COLOR_BLACK, rect, 1)
         #     screen.blit(img, rectText)
+
+            
         
+    def renderBoxSelector(self, pos: XYPos, screen):
+        screen.blit(self.spriteManager.boxSelectAnim.next(), (pos.x, pos.y))             
 
 
-    def Render(self, screen, gridViewStart = XYPos(0, 0)):
+    def Render(self, screen, boxSelectorPos: XYPos = XYPos(0, 0), gridViewStart: XYPos = XYPos(0, 0)):
         screen.fill(COLOR_BACKGROUND)
 
         x_start = max(0, gridViewStart.x)
@@ -165,3 +171,6 @@ class Scene_Test1(BaseScene):
                 For each cell in the grid the function renderCell is called
                 '''
                 self.renderCell(XYPos(x, y), screen, self.terrain[_y][_x], self.vegetation[_x][_y])
+
+                if XYPos(_x, _y) == boxSelectorPos:
+                    self.renderBoxSelector(XYPos(x, y), screen)

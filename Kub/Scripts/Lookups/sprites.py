@@ -44,8 +44,17 @@ VEGETATION_SPRITES = {
     },
 }
 
+BOXSELECTOR_ANIMATION = {
+    "UserInterface/BoxSelector.png": [XYPos(0, 0), XYPos(1, 0)],
+}
+
 SPRITES = {
     "terrain":  TERRAIN_TEXTURE_SPRITES,
     "vegetation": VEGETATION_SPRITES,
+    "UI-boxselector" : BOXSELECTOR_ANIMATION,
+}
+
+ANIMATIONS = {
+    "UI-boxselector" : BOXSELECTOR_ANIMATION,
 }
 

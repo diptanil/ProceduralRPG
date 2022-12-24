@@ -38,3 +38,11 @@ class SpritesheetLoader:
                     colorkey=colorkey
                 )
         return self.sprites 
+
+    def loadAsList(self, colorkey = None):
+        spritesList = []
+        if self.exists:
+            for sp in list(SPRITES[self.category][self.filename]):
+                spritesList.append(self.load_sprite(sp, colorkey=colorkey))
+        
+        return spritesList
