@@ -1,4 +1,5 @@
 import pygame
+
 '''
 Render properties
 '''
@@ -6,8 +7,8 @@ FPS = 60
 '''
 Grid world
 '''
-GRID_WIDTH = 25
-GRID_HEIGHT = 25
+GRID_WIDTH = 30
+GRID_HEIGHT = 30
 '''
 Colors
 '''
