@@ -152,13 +152,15 @@ class Scene_Test1(BaseScene):
         
 
 
-    def Render(self, screen):
+    def Render(self, screen, gridViewStart = XYPos(0, 0)):
         screen.fill(COLOR_BACKGROUND)
 
-        for _x in range(VIEW_WIDTH):
-            for _y in range(VIEW_HEIGHT):
-                x = (_x * SPRITE_SIZE) + Scene_Test1._GridPosition.x
-                y = (_y * SPRITE_SIZE) + Scene_Test1._GridPosition.y
+        x_start = max(0, gridViewStart.x)
+        y_start = max(0, gridViewStart.y)
+        for _x in range(x_start, min(gridViewStart.x + VIEW_WIDTH, GRID_WIDTH)):
+            for _y in range(y_start, min(gridViewStart.y + VIEW_HEIGHT, GRID_HEIGHT)):
+                x = ((_x - x_start) * SPRITE_SIZE) + Scene_Test1._GridPosition.x
+                y = ((_y - y_start) * SPRITE_SIZE) + Scene_Test1._GridPosition.y
                 '''
                 For each cell in the grid the function renderCell is called
                 '''

@@ -9,8 +9,8 @@ FPS = 60
 '''
 Grid world
 '''
-GRID_WIDTH = 30
-GRID_HEIGHT = 30
+GRID_WIDTH = 100
+GRID_HEIGHT = 100
 '''
 Colors
 '''
