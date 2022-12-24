@@ -3,6 +3,8 @@ import pygame
 '''
 Render properties
 '''
+VIEW_WIDTH = 30
+VIEW_HEIGHT = 30
 FPS = 60
 '''
 Grid world

@@ -34,6 +34,14 @@ VEGETATION_SPRITES = {
         "tree-ashoka": XYPos(2, 0),
         "tree-mango": XYPos(3, 0),
     },
+    "Nature/CoconutTrees.png": {
+        "cocotree-right-trunk": XYPos(0, 0),
+        "cocotree-left-trunk": XYPos(1, 0),
+        "cocotree-right": XYPos(2, 0),
+        "cocotree-right-fruit": XYPos(3, 0),
+        "cocotree-left": XYPos(4, 0),
+        "cocotree-left-fruit": XYPos(5, 0),
+    },
 }
 
 SPRITES = {

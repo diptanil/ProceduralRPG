@@ -23,10 +23,13 @@ class Scene_Test1(BaseScene):
     def GenVegetation(self):
         '''
         Only Trees.png considered.
-        These trees only grow in region grass-dark
+        Trees.png only grow in region grass-dark
         overall cell has 0.75 of having a tree
+        CoconutTrees.png only grow in region sand
+        overall cell has 0.5 of having a tree
         '''
-        overall_cellProb = 0.75
+        overall_treeProb = 0.75
+        overall_cocotreeProb = 0.5
         vegetation = [[0 for i in range(GRID_WIDTH)] 
             for j in range(GRID_HEIGHT)]
 
@@ -35,10 +38,23 @@ class Scene_Test1(BaseScene):
         for _x in range(GRID_WIDTH):
             for _y in range(GRID_HEIGHT):
                 val = int(self.terrain[_y][_x] * 100)
+                '''
+                Conditions for Tree.png
+                Range 1 - 4
+                '''
                 if val >= 20 and val < 40:
-                    isTree = random.random() < overall_cellProb
+                    isTree = random.random() < overall_treeProb
                     if isTree:
                         vegetation[_x][_y] = random.randint(1, 4)
+                
+                '''
+                Conditions for CoconutTree.png
+                Range 5 - 10
+                '''
+                if val >= 0 and val < 5:
+                    isTree = random.random() < overall_cocotreeProb
+                    if isTree:
+                        vegetation[_x][_y] = random.randint(5, 10)
         
         return vegetation
 
@@ -85,6 +101,19 @@ class Scene_Test1(BaseScene):
             sprite = "tree-ashoka"
         elif val == 4:
             sprite = "tree-mango"
+
+        elif val == 5:
+            sprite = "cocotree-right-trunk"
+        elif val == 6:
+            sprite = "cocotree-left-trunk"
+        elif val == 7:
+            sprite = "cocotree-right"
+        elif val == 8:
+            sprite = "cocotree-right-fruit"
+        elif val == 9:
+            sprite = "cocotree-left"
+        elif val == 10:
+            sprite = "cocotree-left-fruit"
         
         if sprite != None:
             return vegetationTextures[sprite]
@@ -126,8 +155,8 @@ class Scene_Test1(BaseScene):
     def Render(self, screen):
         screen.fill(COLOR_BACKGROUND)
 
-        for _x in range(GRID_WIDTH):
-            for _y in range(GRID_HEIGHT):
+        for _x in range(VIEW_WIDTH):
+            for _y in range(VIEW_HEIGHT):
                 x = (_x * SPRITE_SIZE) + Scene_Test1._GridPosition.x
                 y = (_y * SPRITE_SIZE) + Scene_Test1._GridPosition.y
                 '''
