@@ -18,6 +18,8 @@ class Scene_Test1(BaseScene):
         self.spriteManager = SpritesManager()
 
         self.spriteManager.boxSelectAnim.iter()
+
+        self.gridViewStart = XYPos(0, 0)
         
     def Update(self):
         pass
@@ -155,18 +157,58 @@ class Scene_Test1(BaseScene):
             
         
     def renderBoxSelector(self, pos: XYPos, screen):
-        screen.blit(self.spriteManager.boxSelectAnim.next(), (pos.x, pos.y))             
+        screen.blit(self.spriteManager.boxSelectAnim.next(), (pos.x, pos.y))  
 
 
-    def Render(self, screen, boxSelectorPos: XYPos = XYPos(0, 0), gridViewStart: XYPos = XYPos(0, 0)):
+    def getGridView(self, boxSelectorPos):
+
+        __x = self.gridViewStart.x
+        __y = self.gridViewStart.y
+
+        if (boxSelectorPos.x - self.gridViewStart.x) < 3:
+            # print("Going Right")
+            __x = max(__x - 1, 0)
+        elif (self.gridViewStart.x + VIEW_WIDTH -1 - boxSelectorPos.x) < 3:
+            # print("Going Left")
+            __x = min(__x + 1, GRID_WIDTH - VIEW_WIDTH)
+
+        if (boxSelectorPos.y - self.gridViewStart.y) < 3:
+            # print("Going Up")
+            __y = max(__y - 1, 0)
+        elif (self.gridViewStart.y + VIEW_HEIGHT -1  - boxSelectorPos.y) < 3:
+            # print("Going Down")
+            __y = min(__y + 1, GRID_HEIGHT - VIEW_HEIGHT)
+
+
+        self.gridViewStart = XYPos(__x, __y)
+        
+
+    # def Render(self, screen, boxSelectorPos: XYPos = XYPos(0, 0)):
+    #     screen.fill(COLOR_BACKGROUND)
+
+    #     self.getGridView(boxSelectorPos)
+
+    #     for _x in range(self.gridViewStart.x, self.gridViewStart.x + VIEW_WIDTH):
+    #         for _y in range(self.gridViewStart.y, self.gridViewStart.y + VIEW_HEIGHT):
+    #             x = ((_x) * SPRITE_SIZE) + Scene_Test1._GridPosition.x
+    #             y = ((_y) * SPRITE_SIZE) + Scene_Test1._GridPosition.y
+    #             '''
+    #             For each cell in the grid the function renderCell is called
+    #             '''
+    #             self.renderCell(XYPos(x, y), screen, self.terrain[_y][_x], self.vegetation[_x][_y])
+
+    #             if XYPos(_x, _y) == boxSelectorPos:
+    #                 self.renderBoxSelector(XYPos(x, y), screen)
+
+    def Render(self, screen, boxSelectorPos: XYPos = XYPos(0, 0)):
         screen.fill(COLOR_BACKGROUND)
 
-        x_start = max(0, gridViewStart.x)
-        y_start = max(0, gridViewStart.y)
-        for _x in range(x_start, min(gridViewStart.x + VIEW_WIDTH, GRID_WIDTH)):
-            for _y in range(y_start, min(gridViewStart.y + VIEW_HEIGHT, GRID_HEIGHT)):
-                x = ((_x - x_start) * SPRITE_SIZE) + Scene_Test1._GridPosition.x
-                y = ((_y - y_start) * SPRITE_SIZE) + Scene_Test1._GridPosition.y
+        self.getGridView(boxSelectorPos)
+
+        for _x in range(self.gridViewStart.x, self.gridViewStart.x + VIEW_WIDTH):
+            for _y in range(self.gridViewStart.y, self.gridViewStart.y + VIEW_HEIGHT):
+                x = ((_x - self.gridViewStart.x) * SPRITE_SIZE) + Scene_Test1._GridPosition.x
+                y = ((_y - self.gridViewStart.y) * SPRITE_SIZE) + Scene_Test1._GridPosition.y
                 '''
                 For each cell in the grid the function renderCell is called
                 '''

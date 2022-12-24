@@ -16,7 +16,7 @@ class Controller:
         This variable keeps track of the top-left
         cell value of the visivle grid
         '''
-        self.gridViewStart = XYPos(0, 0)
+        self.boxSelectorPos = XYPos(10, 10)
 
         if self.debug:
             print("Debug Controller")
@@ -25,26 +25,29 @@ class Controller:
         for event in pygame.event.get():
             if event.type == KEYDOWN:
                 self.do_shortcuts(event)
+
+                cameraInput = self.do_cameraInput(event)
+                if cameraInput != XYPos(0, 0):
+                    self.boxSelectorPos = self.updateSelectorPos(cameraInput)
             if event.type == QUIT:
                 return False
-        keys_pressed = pygame.key.get_pressed()
-        cameraInput = self.do_cameraInput(keys_pressed)
-        if cameraInput != XYPos(0, 0):
-            self.gridViewStart = self.updateGridView(cameraInput)
+        # keys_pressed = pygame.key.get_pressed()
+        # cameraInput = self.do_cameraInput(keys_pressed)
+        # if cameraInput != XYPos(0, 0):
+        #     self.boxSelectorPos = self.updateSelectorPos(cameraInput)
             
-        self.sceneManager.Update(screen, boxSelectorPos=XYPos(10, 10), gridViewStart=self.gridViewStart)
+        self.sceneManager.Update(screen, boxSelectorPos=self.boxSelectorPos)
         pygame.display.flip()
         return True
 
-    def updateGridView(self, cameraInput):
-        # print(f"{self.gridViewStart.x}, {cameraInput.x}")
-        __x = self.gridViewStart.x + cameraInput.x
+    def updateSelectorPos(self, cameraInput):
+        __x = self.boxSelectorPos.x + cameraInput.x
         __x = max(0, __x)
-        __x = min(__x, GRID_WIDTH - VIEW_WIDTH)
+        __x = min(__x, GRID_WIDTH - 1)
         
-        __y = self.gridViewStart.y + cameraInput.y
+        __y = self.boxSelectorPos.y + cameraInput.y
         __y = max(0, __y)
-        __y = min(__y, GRID_WIDTH - VIEW_WIDTH)
+        __y = min(__y, GRID_HEIGHT - 1)
 
         return XYPos(__x, __y)
 
@@ -56,16 +59,30 @@ class Controller:
             controllerFunc = getattr(self, SHORTCUTS[k,m])
             controllerFunc(self)
 
-    def do_cameraInput(self, keys_pressed):
+    # def do_cameraInput(self, keys_pressed):
+    #     __x = 0
+    #     __y = 0
+    #     if keys_pressed[pygame.K_w]:
+    #         __y = -1
+    #     if keys_pressed[pygame.K_s]:
+    #         __y = 1
+    #     if keys_pressed[pygame.K_d]:
+    #         __x = 1
+    #     if keys_pressed[pygame.K_a]:
+    #         __x = -1
+
+    #     return XYPos(__x, __y)
+
+    def do_cameraInput(self, event):
         __x = 0
         __y = 0
-        if keys_pressed[pygame.K_w]:
+        if event.key ==  pygame.K_w:
             __y = -1
-        if keys_pressed[pygame.K_s]:
+        if event.key ==  pygame.K_s:
             __y = 1
-        if keys_pressed[pygame.K_d]:
+        if event.key ==  pygame.K_d:
             __x = 1
-        if keys_pressed[pygame.K_a]:
+        if event.key ==  pygame.K_a:
             __x = -1
 
         return XYPos(__x, __y)
