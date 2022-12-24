@@ -34,6 +34,7 @@ class SpritesheetLoader:
         if self.exists:
             for sp in list(SPRITES[self.category][self.filename].keys()):
                 self.sprites[sp] = self.load_sprite(
-                    SPRITES[self.category][self.filename][sp]
+                    SPRITES[self.category][self.filename][sp], 
+                    colorkey=colorkey
                 )
         return self.sprites 

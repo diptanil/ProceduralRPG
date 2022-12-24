@@ -1,20 +1,48 @@
 import pygame
+import random
+
 from .baseScene import BaseScene
 
 from ..Lookups.lookups import *
 from ..Core.proceduralWorldGenerator import ProceduralWorldGenerator
 from ..Sprites.spritesManager import SpritesManager
+from ..UI.text import Text
 
 class Scene_Test1(BaseScene):
     _GridPosition = XYPos(20,20)
     
     def __init__(self):
         super().__init__()
-        self.terrain = ProceduralWorldGenerator(seed = 2)
+        self.terrain = ProceduralWorldGenerator(seed = 2).noiseGrid
+        self.vegetation = self.GenVegetation()
         self.spriteManager = SpritesManager()
         
     def Update(self):
         pass
+
+    def GenVegetation(self):
+        '''
+        Only Trees.png considered.
+        These trees only grow in region grass-dark
+        overall cell has 0.75 of having a tree
+        '''
+        overall_cellProb = 0.75
+        vegetation = [[0 for i in range(GRID_WIDTH)] 
+            for j in range(GRID_HEIGHT)]
+
+        random.seed(2)
+
+        for _x in range(GRID_WIDTH):
+            for _y in range(GRID_HEIGHT):
+                val = int(self.terrain[_y][_x] * 100)
+                if val >= 20 and val < 40:
+                    isTree = random.random() < overall_cellProb
+                    if isTree:
+                        vegetation[_x][_y] = random.randint(1, 4)
+        
+        return vegetation
+
+
 
     def textureRule(self, val):
         val = int(val * 100)
@@ -40,10 +68,69 @@ class Scene_Test1(BaseScene):
             sprite = "rock"
         elif val >= 45:
             sprite = "snow"
+
+        
         if sprite != None:
             return terrainTextures[sprite]
         return None
 
+    def vegetationRule(self, val):
+        vegetationTextures = self.spriteManager.vegetationTextures
+        sprite = None
+        if val == 1:
+            sprite = "tree-trunk"
+        elif val == 2:
+            sprite = "tree-bel"
+        elif val == 3:
+            sprite = "tree-ashoka"
+        elif val == 4:
+            sprite = "tree-mango"
+        
+        if sprite != None:
+            return vegetationTextures[sprite]
+        return None
+
+    '''
+    renderCell function decides which sprites should be rendered
+    in each grid cell
+    '''
+    def renderCell(self, pos: XYPos, screen, cellVal, vegVal):
+        '''
+        Render order (top - rendered first, bottom rendered last)
+        '''
+        ############ TERRAIN #############
+        terrainSprite = self.textureRule(cellVal)
+
+        if terrainSprite != None:
+            screen.blit(terrainSprite, (pos.x, pos.y))
+        else:
+            rect = pygame.Rect(pos.x, pos.y, SPRITE_SIZE, SPRITE_SIZE)
+            img, rectText = Text(str(int(cellVal * 10)), pos=(pos.x + 2, pos.y +2)).render()
+            pygame.draw.rect(screen, COLOR_BLACK, rect, 1)
+            screen.blit(img, rectText)
+        
+        ############ VEGETATION #############
+
+        vegetationSprite = self.vegetationRule(vegVal)
+
+        if vegetationSprite != None:
+            screen.blit(vegetationSprite, (pos.x, pos.y))
+        # else:
+        #     rect = pygame.Rect(pos.x, pos.y, SPRITE_SIZE, SPRITE_SIZE)
+        #     img, rectText = Text(str(vegVal), pos=(pos.x + 2, pos.y +2)).render()
+        #     pygame.draw.rect(screen, COLOR_BLACK, rect, 1)
+        #     screen.blit(img, rectText)
+        
+
+
     def Render(self, screen):
         screen.fill(COLOR_BACKGROUND)
-        self.terrain.drawGrid(screen, Scene_Test1._GridPosition, textureLogic = self.textureRule)
+
+        for _x in range(GRID_WIDTH):
+            for _y in range(GRID_HEIGHT):
+                x = (_x * SPRITE_SIZE) + Scene_Test1._GridPosition.x
+                y = (_y * SPRITE_SIZE) + Scene_Test1._GridPosition.y
+                '''
+                For each cell in the grid the function renderCell is called
+                '''
+                self.renderCell(XYPos(x, y), screen, self.terrain[_y][_x], self.vegetation[_x][_y])

@@ -27,7 +27,17 @@ TERRAIN_TEXTURE_SPRITES = {
     },
 }
 
+VEGETATION_SPRITES = {
+    "Nature/Trees.png": {
+        "tree-trunk": XYPos(0, 0),
+        "tree-bel": XYPos(1, 0),
+        "tree-ashoka": XYPos(2, 0),
+        "tree-mango": XYPos(3, 0),
+    },
+}
+
 SPRITES = {
     "terrain":  TERRAIN_TEXTURE_SPRITES,
+    "vegetation": VEGETATION_SPRITES,
 }
 
