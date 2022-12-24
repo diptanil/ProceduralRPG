@@ -134,7 +134,10 @@ class ProceduralGridGeneration:
         for x in range(self._gridWidth):
             for y in range(self._gridHeight):
                 rect = pygame.Rect(x * self._gridCellSize, y * self._gridCellSize, self._gridCellSize, self._gridCellSize)
-                rectText = str(self.noiseGrid[x][y])
-                img, rectText = Text(rectText, pos=( (x * self._gridCellSize) + 2, (y * self._gridCellSize) +2)).render()
+                rectValue = self.noiseGrid[x][y]
+                img, rectText = Text(str(rectValue), pos=( (x * self._gridCellSize) + 2, (y * self._gridCellSize) +2)).render()
                 pygame.draw.rect(self.screen, self._gridLineColor, rect, 1)
-                self.screen.blit(img, rectText)
+                if rectValue == 0:
+                    self.screen.blit(self.groundTexture['Water'], (x * self._gridCellSize, y * self._gridCellSize))
+                else:
+                    self.screen.blit(img, rectText)

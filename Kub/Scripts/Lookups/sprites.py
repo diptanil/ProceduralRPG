@@ -1,4 +1,5 @@
 from ..Utils.utils import *
+
 SPRITES = {
     "Ground/Grass.png": {
         "Water": XYPos(0, 0),

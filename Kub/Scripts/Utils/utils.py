@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+
 @dataclass
 class XYPos:
     def __init__(self, x: int, y: int):
