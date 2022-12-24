@@ -1,10 +1,18 @@
 import pygame
 '''
+Render properties
+'''
+FPS = 60
+'''
 Grid world
 '''
 GRID_WIDTH = 25
 GRID_HEIGHT = 25
-COLOR_BACKGROUND = pygame.Color('red')
+'''
+Colors
+'''
+COLOR_BLACK = pygame.Color('black')
+COLOR_BACKGROUND = pygame.Color('gray')
 '''
 Sprites
 '''

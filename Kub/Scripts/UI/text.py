@@ -1,6 +1,8 @@
 import pygame
 from pygame.locals import *
 
+from ..Lookups.lookups import *
+
 class Text():
     """Create a text object."""
 
@@ -9,8 +11,8 @@ class Text():
         self.pos = pos
 
         self.fontname = None
-        self.fontsize = 72
-        self.fontcolor = Color('black')
+        self.fontsize = 16
+        self.fontcolor = COLOR_BLACK
         self.set_font()
         self.render()
 
@@ -23,8 +25,5 @@ class Text():
         self.img = self.font.render(self.text, True, self.fontcolor)
         self.rect = self.img.get_rect()
         self.rect.topleft = self.pos
-
-    def draw(self, app):
-        """Draw the text image to the screen"""
-        app.screen.blit(self.img, self.rect)
+        return self.img, self.rect
         

@@ -1,10 +1,9 @@
 import pygame
 from pygame.locals import *
 
-from .UI.text import Text
 from .Lookups.lookups import *
 from .Core.controller import Controller
-from ..Scenes.sceneTest1 import Scene_Test1
+from .Scenes.sceneManager import SceneManager
 
 class App:
     "Create a single window app with multiple Scenes"
@@ -12,14 +11,11 @@ class App:
     def __init__(self):
         pygame.init()
 
-        self.fps = 60
-
         self.flags = RESIZABLE
-        self.rect = Rect(0, 0, 640, 240)
+        self.rect = Rect(0, 0, 600, 600)
         App.screen = pygame.display.set_mode(self.rect.size, self.flags)
-        App.t = Text('Pygame App', pos = (20,20))
 
-        self.startingScene = Scene_Test1()
+        self.sceneManager = SceneManager()
 
         self.controller = Controller()
 
@@ -28,11 +24,8 @@ class App:
     def run(self):
         """"Run main event loop"""
         clock = pygame.time.Clock()
-        active_scene = self.startingScene
         while App.running:
-            clock.tick(self.fps)
-            filtered_events = []
-            pressed_keys = pygame.key.get_pressed()
+            clock.tick(FPS)
             for event in pygame.event.get():
                 quit_attempt = False
                 if event.type == KEYDOWN:
@@ -40,17 +33,9 @@ class App:
                 if event.type == QUIT:
                     App.running = False
                 if quit_attempt:
-                    active_scene.Terminate()
-                else:
-                    filtered_events.append(event)
+                    self.sceneManager.Terminate()
                 
-            active_scene.ProcessInput(filtered_events, pressed_keys)
-            active_scene.Update()
-            active_scene.Render(App.screen)
-
-            active_scene = active_scene.next
-            # App.screen.fill(Color('gray'))
-            # App.t.draw(self)
+            self.sceneManager.Update(App.screen)
             pygame.display.flip()
 
         pygame.quit()
@@ -61,4 +46,3 @@ class App:
         if (k,m) in SHORTCUTS:
             controllerFunc = getattr(self.controller, SHORTCUTS[k,m])
             controllerFunc(self)
-            # exec(self.controller[k,m])
