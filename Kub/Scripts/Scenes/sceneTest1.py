@@ -21,13 +21,15 @@ class Scene_Test1(BaseScene):
         self.terrain = ProceduralWorldGenerator(seed = 2).noiseGrid
         self.vegetation = self.GenVegetation()
         self.spriteManager = SpritesManager()
-
-        self.spriteManager.boxSelectAnim.iter()
+        if self.spriteManager.boxSelectAnim != None:
+            self.spriteManager.boxSelectAnim.iter()
 
         self.gridViewStart = XYPos(0, 0)
         self.infoBox = InfoBox(Scene_Test1._InfoBoxPosition, Scene_Test1._InfoBoxWidth, Scene_Test1._InfoBoxHeight)
 
-        clearInformation()
+        self.previousboxSelector = XYPos(0, 0)
+
+        self.information = Information()
 
         
     def Update(self):
@@ -76,6 +78,8 @@ class Scene_Test1(BaseScene):
     def textureRule(self, val):
         val = int(val * 100)
         terrainTextures = self.spriteManager.terrainTextures
+        if terrainTextures == None:
+            return None
         sprite = None
         if val < -30:
             sprite = "deep-water"
@@ -105,6 +109,8 @@ class Scene_Test1(BaseScene):
 
     def vegetationRule(self, val):
         vegetationTextures = self.spriteManager.vegetationTextures
+        if vegetationTextures == None:
+            return None
         sprite = None
         if val == 1:
             sprite = "tree-trunk"
@@ -166,35 +172,82 @@ class Scene_Test1(BaseScene):
             
         
     def renderBoxSelector(self, pos: XYPos, screen):
-        screen.blit(self.spriteManager.boxSelectAnim.next(), (pos.x, pos.y))
+        if self.spriteManager.boxSelectAnim != None:
+            screen.blit(self.spriteManager.boxSelectAnim.next(), (pos.x, pos.y))
 
     def updateInfobox(self, pos):
-        terrainVal = int(self.terrain[pos.y][pos.x] * 100)
 
-        if val < -30:
+        self.information.clearInformation()
+
+        terrainVal = int(self.terrain[pos.y][pos.x] * 100)
+        terrainInfo = "Height: " + str(terrainVal)
+
+        if terrainVal < 0:
+            msgtype = "waterbody"
+        else:
+            msgtype = None
+
+        self.information.addInformation(terrainInfo, msgType=msgtype)
+
+        if terrainVal < -30:
             terrainType = "deep-water"
-        elif val >=-30 and val < -20 :
+        elif terrainVal >=-30 and terrainVal < -20 :
             terrainType = "water"
-        elif val >=-20 and val < -10 :
+        elif terrainVal >=-20 and terrainVal < -10 :
             terrainType = "shallow-water"
-        elif val >=-10 and val < 0 :
+        elif terrainVal >=-10 and terrainVal < 0 :
             terrainType = "wet-sand"
-        elif val >= 0 and val < 5 :
+        elif terrainVal >= 0 and terrainVal < 5 :
             terrainType = "sand"
-        elif val >=5 and val < 10 :
+        elif terrainVal >=5 and terrainVal < 10 :
             terrainType = "ground-dirt1"
-        elif val >=10 and val < 20 :
+        elif terrainVal >=10 and terrainVal < 20 :
             terrainType = "grass-light"
-        elif val >=20 and val < 40 :
+        elif terrainVal >=20 and terrainVal < 40 :
             terrainType = "grass-dark"
-        elif val >=40 and val < 45 :
+        elif terrainVal >=40 and terrainVal < 45 :
             terrainType = "rock"
-        elif val >= 45:
+        elif terrainVal >= 45:
             terrainType = "snow"
-        
-        terrainInfo = ""
+
+        terrainInfo = "Land Type: " + terrainType
+
+        self.information.addInformation(terrainInfo)
             
         vegetationVal = self.vegetation[pos.x][pos.y]
+        vegetationType = ""
+        fruit = ""
+
+        if vegetationVal == 1:
+            vegetationType = "Tree Trunk"
+        elif vegetationVal == 2:
+            vegetationType = "Bel"
+        elif vegetationVal == 3:
+            vegetationType = "Ashoka"
+        elif vegetationVal == 4:
+            vegetationType = "Mango"
+            fruit = "Mango"
+
+        elif vegetationVal == 5:
+            vegetationType = "Coconut Trunk"
+        elif vegetationVal == 6:
+            vegetationType = "Coconut Trunk"
+        elif vegetationVal == 7:
+            vegetationType = "Coconut"
+        elif vegetationVal == 8:
+            vegetationType = "Coconut"
+            fruit = "Coconut"
+        elif vegetationVal == 9:
+            vegetationType = "Coconut"
+        elif vegetationVal == 10:
+            vegetationType = "Coconut"
+            fruit = "Coconut"
+        if vegetationType != "":
+            vegetationInfo = "Tree: " + vegetationType
+            self.information.addInformation(vegetationInfo, msgType="vegetation")
+        if fruit != "":
+            fruitInfo = "Fruit: " + fruit
+            self.information.addInformation(fruitInfo, msgType="vegetation")
 
 
 
@@ -238,7 +291,11 @@ class Scene_Test1(BaseScene):
                 self.renderCell(XYPos(x, y), screen, self.terrain[_y][_x], self.vegetation[_x][_y])
 
                 if XYPos(_x, _y) == boxSelectorPos:
-                    self.updateInfobox(boxSelectorPos)
+                    if boxSelectorPos != self.previousboxSelector:
+                        self.previousboxSelector = boxSelectorPos
+                        self.updateInfobox(boxSelectorPos)
+
                     self.renderBoxSelector(XYPos(x, y), screen)
+                    
         
-        self.infoBox.Render(screen)
+        self.infoBox.Render(screen, self.information.information)

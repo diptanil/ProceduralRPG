@@ -20,10 +20,10 @@ class XYPos:
     def __str__(self) -> str:
         return "(" + str(self.x) + " ," + str(self.y) + " )"
 
-
-INFORMATION = []
-
-
+'''
+Info box data structure for storing the text along 
+with their fontcolor (dependent upon their type)
+'''
 @dataclass
 class InfoBoxText:
     def __init__(self, text, msgType = None):
@@ -32,14 +32,23 @@ class InfoBoxText:
 
         if msgType == "vegetation":
             self.fontcolor = COLOR_VEGETATION
+        elif msgType == "waterbody":
+            self.fontcolor = COLOR_WATERBODY
         else:
             self.fontcolor = COLOR_INFOBOX_MESSAGE
 
-@staticmethod
-def addInformation(text, msgType = None):
-    infoText = InfoBoxText(text, msgType)
-    INFORMATION.append(infoText)
+'''
+All the information that is available in the
+Info Box.
+'''
+class Information:
+    def __init__(self):
+        self.information = []
+    
+    def addInformation(self, text, msgType = None):
+        self.information.append(InfoBoxText(text, msgType=msgType))
+    
+    def clearInformation(self):
+        self.information = []
 
-@staticmethod
-def clearInformation():
-    INFORMATION = ""
+

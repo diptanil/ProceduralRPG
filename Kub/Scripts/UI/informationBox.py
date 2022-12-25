@@ -13,7 +13,7 @@ class InfoBox:
         self.topMargin = 10
 
     
-    def Render(self, screen):
+    def Render(self, screen, information):
         '''
         Rendering background
         '''
@@ -22,9 +22,9 @@ class InfoBox:
         '''
         Rendering all the texts
         '''
-        for infoText in INFORMATION:
+        for ind, infoText in enumerate(information):
             img, rectText  = Text(infoText.text, pos=(self.position.x + self.rightMargin,
-                                    self.position.y + self.topMargin), 
+                                    self.position.y + self.topMargin + ind * SPRITE_SIZE), 
                                     fontcolor=infoText.fontcolor).render()
             
             screen.blit(img, rectText)
