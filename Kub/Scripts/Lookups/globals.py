@@ -6,6 +6,8 @@ Render properties
 VIEW_WIDTH = 30
 VIEW_HEIGHT = 30
 FPS = 60
+WINDOW_WIDTH = 900
+WINDOW_HEIGHT = 600
 '''
 Grid world
 '''
@@ -15,7 +17,13 @@ GRID_HEIGHT = 100
 Colors
 '''
 COLOR_BLACK = pygame.Color('black')
-COLOR_BACKGROUND = pygame.Color('gray')
+COLOR_GRAY = pygame.Color('gray')
+COLOR_GREEN = pygame.Color('green')
+
+COLOR_BACKGROUND = COLOR_GRAY
+COLOR_INFOBOX_BACKGROUND = COLOR_BLACK
+COLOR_INFOBOX_MESSAGE = COLOR_GRAY
+COLOR_VEGETATION = COLOR_GREEN
 '''
 Sprites
 '''

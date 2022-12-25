@@ -6,13 +6,13 @@ from ..Lookups.lookups import *
 class Text():
     """Create a text object."""
 
-    def __init__(self, text, pos, **options):
+    def __init__(self, text, pos, fontcolor = COLOR_BLACK):
         self.text = text
         self.pos = pos
 
         self.fontname = None
         self.fontsize = 16
-        self.fontcolor = COLOR_BLACK
+        self.fontcolor = fontcolor
         self.set_font()
         self.render()
 

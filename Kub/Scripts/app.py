@@ -11,7 +11,7 @@ class App:
         pygame.init()
 
         self.flags = RESIZABLE
-        self.rect = Rect(0, 0, 600, 600)
+        self.rect = Rect(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT)
         App.screen = pygame.display.set_mode(self.rect.size, self.flags)
 
         self.controller = Controller(self)

@@ -7,9 +7,14 @@ from ..Lookups.lookups import *
 from ..Core.proceduralWorldGenerator import ProceduralWorldGenerator
 from ..Sprites.spritesManager import SpritesManager
 from ..UI.text import Text
+from ..UI.informationBox import InfoBox
+from ..Utils.utils import *
 
 class Scene_Test1(BaseScene):
     _GridPosition = XYPos(20,20)
+    _InfoBoxPosition = XYPos(_GridPosition.x + VIEW_WIDTH * SPRITE_SIZE + 20, _GridPosition.y)
+    _InfoBoxWidth: int = 200
+    _InfoBoxHeight:int = 480
     
     def __init__(self):
         super().__init__()
@@ -20,6 +25,10 @@ class Scene_Test1(BaseScene):
         self.spriteManager.boxSelectAnim.iter()
 
         self.gridViewStart = XYPos(0, 0)
+        self.infoBox = InfoBox(Scene_Test1._InfoBoxPosition, Scene_Test1._InfoBoxWidth, Scene_Test1._InfoBoxHeight)
+
+        clearInformation()
+
         
     def Update(self):
         pass
@@ -157,7 +166,36 @@ class Scene_Test1(BaseScene):
             
         
     def renderBoxSelector(self, pos: XYPos, screen):
-        screen.blit(self.spriteManager.boxSelectAnim.next(), (pos.x, pos.y))  
+        screen.blit(self.spriteManager.boxSelectAnim.next(), (pos.x, pos.y))
+
+    def updateInfobox(self, pos):
+        terrainVal = int(self.terrain[pos.y][pos.x] * 100)
+
+        if val < -30:
+            terrainType = "deep-water"
+        elif val >=-30 and val < -20 :
+            terrainType = "water"
+        elif val >=-20 and val < -10 :
+            terrainType = "shallow-water"
+        elif val >=-10 and val < 0 :
+            terrainType = "wet-sand"
+        elif val >= 0 and val < 5 :
+            terrainType = "sand"
+        elif val >=5 and val < 10 :
+            terrainType = "ground-dirt1"
+        elif val >=10 and val < 20 :
+            terrainType = "grass-light"
+        elif val >=20 and val < 40 :
+            terrainType = "grass-dark"
+        elif val >=40 and val < 45 :
+            terrainType = "rock"
+        elif val >= 45:
+            terrainType = "snow"
+        
+        terrainInfo = ""
+            
+        vegetationVal = self.vegetation[pos.x][pos.y]
+
 
 
     def getGridView(self, boxSelectorPos):
@@ -183,27 +221,12 @@ class Scene_Test1(BaseScene):
         self.gridViewStart = XYPos(__x, __y)
         
 
-    # def Render(self, screen, boxSelectorPos: XYPos = XYPos(0, 0)):
-    #     screen.fill(COLOR_BACKGROUND)
-
-    #     self.getGridView(boxSelectorPos)
-
-    #     for _x in range(self.gridViewStart.x, self.gridViewStart.x + VIEW_WIDTH):
-    #         for _y in range(self.gridViewStart.y, self.gridViewStart.y + VIEW_HEIGHT):
-    #             x = ((_x) * SPRITE_SIZE) + Scene_Test1._GridPosition.x
-    #             y = ((_y) * SPRITE_SIZE) + Scene_Test1._GridPosition.y
-    #             '''
-    #             For each cell in the grid the function renderCell is called
-    #             '''
-    #             self.renderCell(XYPos(x, y), screen, self.terrain[_y][_x], self.vegetation[_x][_y])
-
-    #             if XYPos(_x, _y) == boxSelectorPos:
-    #                 self.renderBoxSelector(XYPos(x, y), screen)
-
     def Render(self, screen, boxSelectorPos: XYPos = XYPos(0, 0)):
         screen.fill(COLOR_BACKGROUND)
 
         self.getGridView(boxSelectorPos)
+
+        # print(Scene_Test1._InfoBoxPosition)
 
         for _x in range(self.gridViewStart.x, self.gridViewStart.x + VIEW_WIDTH):
             for _y in range(self.gridViewStart.y, self.gridViewStart.y + VIEW_HEIGHT):
@@ -215,4 +238,7 @@ class Scene_Test1(BaseScene):
                 self.renderCell(XYPos(x, y), screen, self.terrain[_y][_x], self.vegetation[_x][_y])
 
                 if XYPos(_x, _y) == boxSelectorPos:
+                    self.updateInfobox(boxSelectorPos)
                     self.renderBoxSelector(XYPos(x, y), screen)
+        
+        self.infoBox.Render(screen)
